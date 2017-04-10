@@ -47,15 +47,14 @@ var Positive = tcomb.refinement(tcomb.Number, function (n) {
 });
 
 var PersonFields = {
+    firstname: tcomb.String,             // a required string
+    lastname: tcomb.String,              // an optional string
     username: tcomb.String,              // a required string
     password: tcomb.String,              // a required string
-    gender: Gender,
-    firstname: tcomb.String,              // a required string
     mobile: tcomb.Number,
-    lastname: tcomb.String,  // an optional string
     email: tcomb.String,
-    birth: tcomb.Date,
-}
+    nationalCode: tcomb.Number,  // an optional string
+};
 
 // here we are: define your domain model
 var Person = tcomb.struct(PersonFields);
@@ -64,11 +63,11 @@ var Person = tcomb.struct(PersonFields);
 var options = {
     fields: {
         username: {
-            placeholder: 'نام کاربری',
+            placeholder: 'Username',
             label: 'نام کاربری',
             error: 'نام کاربری معتبر نیست'
         }, password: {
-            placeholder: 'گذرواژه',
+            placeholder: 'Password',
             label: 'گذرواژه',
             error: 'گذرواژه معتبر نیست'
         }, firstname: {
@@ -82,22 +81,23 @@ var options = {
             help: 'مثلا محمدی',
             error: 'نام خانوادگی معتبر نیست'
         }, email: {
-            placeholder: 'you@server.com',
+            placeholder: '',
             label: 'ایمیل',
             error: 'آین آدرس معتبر نیست',
         }, mobile: {
-            help: '09126136545 یا 989126136545',
+            help: '09124002000 یا 989124002000',
             placeholder: '09126136545',
             label: 'شماره موبایل',
             error: 'این شماره معتبر نیست',
         }, birth: {
-            placeholder: 'you@server.com',
+            placeholder: '',
             label: 'تاریخ تولد',
             error: 'تاریخ تولد نادرست است'
-        }, gender: {
-            placeholder: 'you@server.com',
-            label: 'آقا یا خانم؟',
-            error: 'جنسیت انتخاب نشده است'
+        }, nationalCode: {
+            placeholder: '',
+            label: 'کدل ملی',
+            error: 'کد ملی نادر است',
+            help: 'مثلا 0493208641',
         },
         captcha: {
             placeholder: 'کد امنیتی',
@@ -173,7 +173,7 @@ class Register extends React.Component {
                     break;
                 case 406:
                     response.json().then((json)=> {
-                        
+
                         console.log(json);
                     });
 
@@ -196,8 +196,6 @@ class Register extends React.Component {
         return (
             <KeyboardAwareScrollView>
                 <View style={styles.container}>
-
-                    <Demo/>
                     <Form
                         ref="form"
                         type={captcha?Person_with_captcha:Person}

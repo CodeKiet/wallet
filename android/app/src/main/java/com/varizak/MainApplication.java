@@ -7,6 +7,7 @@ import android.util.Log;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.ReactApplication;
+import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
 //import com.brentvatne.RCTVideo.ReactVideoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -67,6 +68,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RCTCameraPackage(),
             new FIRMessagingPackage(),
                     new ReactVideoPackage(),
                     new VectorIconsPackage(),

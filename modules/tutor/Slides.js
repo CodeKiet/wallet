@@ -11,7 +11,7 @@ import {connect} from 'react-redux'
 
 import Button from 'react-native-button';
 import Communications from 'react-native-communications';
-import {Actions, Router} from 'react-native-redux-router';
+import {Actions} from 'react-native-router-flux';
 var tcomb = require('tcomb-form-native');
 var Form = tcomb.form.Form;
 import Swiper from 'react-native-swiper';
@@ -47,12 +47,14 @@ var styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: 'bold',
         height: 50,
+        fontFamily:"iransans"
     },
     textInverted: {
         color: '#fff',
         fontSize: 25,
         fontWeight: 'bold',
         height: 50,
+        fontFamily:"iransans"
     },
     images: {
         height: 320,
@@ -70,7 +72,7 @@ BackAndroid.addEventListener('hardwareBackPress', function () {
     }
     return false;
 });
-import ButtonComponent, { CircleButton, RoundButton, RectangleButton } from 'react-native-button-component';
+import ButtonComponent, {CircleButton, RoundButton, RectangleButton} from 'react-native-button-component';
 var Hands = require("./13360-NOWT5W.png");
 var Buy = require("./buy.png");
 var FreeTransfer = require("./freetransfer.png");
@@ -118,6 +120,10 @@ class Transfer extends React.Component {
         SendIntentAndroid.sendPhoneCall(`*788*97*8600*${this.state.value.amount}%23`);
     }
 
+    goToLogin() {
+        Actions.login()
+    }
+
     render() {
         return (
             <Swiper style={styles.wrapper} showsButtons={true}>
@@ -141,9 +147,8 @@ class Transfer extends React.Component {
                     <Image resizeMode="contain" source={MessageImage} style={styles.images}/>
                     <Text style={styles.textInverted}>با پیامک</Text>
                     <ButtonComponent
-                        onPress={() => {}}
-                        
-                        text="Button"
+                        onPress={this.goToLogin}
+                        text="ورود/ثبت نام"
                     >
                     </ButtonComponent>
                 </View>

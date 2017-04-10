@@ -7,8 +7,8 @@
 import React, {Component} from 'react';
 import Drawer from 'react-native-drawer';
 import Button from 'react-native-button';
-//import Notification from 'react-native-system-notification';
 import Login from "./modules/auth/Login.js";
+//import Notification from 'react-native-system-notification';
 import thunk from 'redux-thunk';
 import {Scene, Router, TabBar, Modal, Schema, Actions, Reducer, ActionConst} from 'react-native-router-flux'
 
@@ -27,6 +27,7 @@ import CounterReducer from './modules/navbar_reducer';
 import VideoPlayer from './modules/Video.js';
 import TimeLine from './modules/TimeLine.js';
 import Slides from './modules/tutor/Slides.js';
+import Faq from './modules/faq/Faq.js';
 
 import {NavBar, NavBarModal} from './modules/NavBar.js';
 import {getStoredState, autoRehydrate, createPersistor} from 'redux-persist'
@@ -93,7 +94,7 @@ class MenuItemWithIcon extends Component {
 
 
 import {reducers} from "./modules/route/config"
-
+import SplashScreen from 'react-native-splash-screen'
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
 const persistConfig = {whitelist: "test"};
@@ -104,6 +105,10 @@ getStoredState(persistConfig, (err, restoredState) => {
     const persistor = createPersistor(store, persistConfig);
 
     class Varizak extends Component {
+        componentDidMount() {
+            SplashScreen.hide();
+        }
+
         constructor(props) {
             super(props);
             this.strings = new LocalizedStrings({
@@ -145,6 +150,16 @@ getStoredState(persistConfig, (err, restoredState) => {
              });*/
 
         };
+
+        goToFaq = () => {
+            Actions.faq();
+            this._drawer.closeDrawer();
+
+
+
+        };
+
+
 
         goToVideo = ()=> {
             Actions.video();
@@ -200,12 +215,13 @@ getStoredState(persistConfig, (err, restoredState) => {
             this.strings.setLanguage('fa');
             var navigationView = (
                 <View style={{flex: 1, backgroundColor: '#333'}}>
-                    <View style={{flex: 1, paddingTop:30}}>
+                    <View style={{flex: 1, paddingTop:200}}>
 
 
                         <MenuItemWithIcon icon="user-plus" title="ورود/ثبت نام" onPress={this.goToLogin}/>
                         <MenuItemWithIcon icon="cloud-download" title="تنظیمات" onPress={this.goToSettings}/>
                         <MenuItemWithIcon icon="cloud-download" title="معرفی" onPress={this.goToTutor}/>
+                        <MenuItemWithIcon icon="cloud-download" title="سوالات متداول" onPress={this.goToFaq}/>
                         <MenuItemWithIcon icon="sign-out" title="خروج" onPress={this.goToLogin}/>
 
                     </View>
@@ -219,18 +235,18 @@ getStoredState(persistConfig, (err, restoredState) => {
                         renderNavigationView={() => navigationView}
                         ref={(c) => this._drawer = c}>
 
-                        <View style={{flex:1}}>
-                            <View
-                                style={{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}/>
-
-
+                        <View
+                            style={{flex:1,position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}>
                             <RouterWithRedux sceneStyle={{backgroundColor:'#F7F7F7'}}>
-
-                                <Scene key="login" component={Login} title="ورود/ثبت نام" duration={0}/>
-                                <Scene key="transfer" component={Transfer} initial={true} title="واریزک" duration={0}/>
-                                <Scene key="settings" component={Settings} title="تنظیمات" duration={0}/>
-                                <Scene key="register" component={Register} title="ثبت نام" duration={0}/>
-                                <Scene key="tutor" hideNavBar component={Slides} duration={0}/>
+                                <Scene key="root" unmountScenes>
+                                    <Scene key="login" hideNavBar component={Login} title="ورود/ثبت نام" duration={0}/>
+                                    <Scene key="transfer" component={Transfer} initial={true} title="واریزک"
+                                           duration={0}/>
+                                    <Scene key="settings" component={Settings} title="تنظیمات" duration={0}/>
+                                    <Scene key="register" component={Register} title="ثبت نام" duration={0}/>
+                                    <Scene key="tutor" hideNavBar component={Slides} duration={0}/>
+                                    <Scene key="faq" component={Faq} duration={0}/>
+                                </Scene>
                             </RouterWithRedux>
 
 
@@ -243,6 +259,8 @@ getStoredState(persistConfig, (err, restoredState) => {
 
     }
 
+    /*<View
+     style={{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}/>*/
     const styles = StyleSheet.create({
         container: {
             flex: 1,

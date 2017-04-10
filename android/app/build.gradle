@@ -143,13 +143,14 @@ android {
 }
 
 dependencies {
+
+    compile project(':react-native-camera')
     compile  'com.google.firebase:firebase-core:9.4.0'
     compile 'com.google.firebase:firebase-messaging:9.4.0'
 
     compile project(':react-native-fcm')
     compile project(':react-native-video')
     compile project(':react-native-vector-icons')
-    /*compile project(':react-native-system-notification')*/
     compile project(':react-native-splash-screen')
     compile project(':react-native-localization')
     compile project(':react-native-google-signin')

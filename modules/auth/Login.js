@@ -8,18 +8,33 @@ import Button from 'react-native-button';
 import {Actions} from 'react-native-router-flux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import * as Animatable from 'react-native-animatable';
+import ButtonComponent, {CircleButton, RoundButton, RectangleButton} from 'react-native-button-component';
 //import SmartScrollView from 'react-native-smart-scroll-view';
+var _ = require('lodash');
 
-
-
-
+const stylesheet = _.cloneDeep(tcomb.form.Form.stylesheet);
+//stylesheet.textbox.normal.color = '#00FF00';
+stylesheet.textbox.normal = {
+    color: "white",
+    fontSize: 20,
+    fontFamily: "iransans",
+    opacity: 0.5,
+    height: 64,
+    padding: 7,
+    borderRadius: 4,
+    borderWidth: 0,
+    marginBottom: 5,
+    backgroundColor: '#607D8B',
+};
+stylesheet.textbox.notEditable.color = "white";
+import LinearGradient from 'react-native-linear-gradient';
 
 var Form = tcomb.form.Form;
 
 
 // here we are: define your domain model
 var Person = tcomb.struct({
-    username: tcomb.String,              // a required string
+    username: tcomb.Number,              // a required string
     password: tcomb.String,              // a required string
 });
 
@@ -27,13 +42,21 @@ var Person = tcomb.struct({
 var options = {
     fields: {
         username: {
-            placeholder: 'نام کاربری یا شماره تلفن',
-            label: 'نام کاربری',
-            error: 'نام کاربری معتبر نیست'
+            placeholder: 'شماره تلفن',
+            label: ' ',
+            error: 'نام کاربری معتبر نیست',
+            help: 'مثلا 09129035040',
+            placeholderTextColor:"#BDBDBD",
+
+            stylesheet: stylesheet // overriding the style of the textbox
         }, password: {
-            placeholder: 'گذرواژه',
-            label: 'گذرواژه',
-            error: 'گذرواژه معتبر نیست'
+            placeholder: 'Password',
+            label: ' ',
+            error: 'گذرواژه معتبر نیست',
+            stylesheet: stylesheet, // overriding the style of the textbox
+            password: true,
+            secureTextEntry: true,
+            placeholderTextColor:"#BDBDBD",
         }
     }
 };
@@ -55,7 +78,7 @@ class Login extends React.Component {
         });
     }
 
-    goToRegister(){
+    goToRegister() {
         // Listen to notification-clicking events
         Actions.register();
         //this._drawer.closeDrawer();
@@ -111,27 +134,95 @@ class Login extends React.Component {
 
 
     render() {
+        var self = this;
         return (
-            <KeyboardAwareScrollView>
-                <View style={styles.container}>
-                    <Form
-                        ref="form"
-                        type={Person}
-                        options={options}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                    />
-                    <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
-                                        underlayColor='#99d9f4'>
-                        <Text style={styles.buttonText}>ورود</Text>
-                    </TouchableHighlight>
+            <LinearGradient
+                start={{x: 0.25, y: 0.5}} end={{x: 0.75, y: 0.5}}
+                locations={[0,0.23,1]}
+                colors={['#ffffff', '#f6f6f6', '#ededed']}
+                style={styles.container}>
 
-                    <TouchableHighlight style={styles.button} onPress={this.goToRegister}
-                                        underlayColor='#99d9f4'>
-                        <Text style={styles.buttonText}>ثبت نام</Text>
-                    </TouchableHighlight>
+
+                <Text style={{fontFamily:"iransans",fontSize:26,color:"gray",}}>ورود</Text>
+                <Form
+                    ref="form"
+                    type={Person}
+                    options={options}
+                    value={this.state.value}
+                    onChange={this.onChange.bind(this)}
+                    style={{flex:1,}}
+                />
+
+                <View
+                    style={{position: 'absolute', bottom:0, left: 0, right: 0,flexDirection:"row", justifyContent:"center",height:64}}>
+                    <ButtonComponent
+                        buttonState={this.state.buttonState||"upload"} // "upload" or "uploading"
+                        text="Button"
+                        type="primary"
+                        shape="rectangle"
+                        backgroundColors={['#FF5722', '#FFAB91']}
+                        height={64}
+
+                        style={{flex:1}}
+                        textStyle={{fontFamily:"iransans",fontSize:16}}
+
+                        states={{
+                            upload: {
+                              text: 'ثبت نام',
+                              backgroundColors: ['#FF5722', '#FF7043'],
+                              onPress: () => {
+                                self.goToRegister()
+                              },
+                            },
+                            uploading: {
+                              text: 'ثبت نام',
+
+
+                              backgroundColors: ['#ff4949', '#fe6060'],
+                              spinner: true,
+                              onPress: () => {
+                                self.goToRegister()
+                              },
+                            },
+                          }}
+                    >
+                    </ButtonComponent >
+                    <ButtonComponent
+                        buttonState={this.state.buttonState||"upload"} // "upload" or "uploading"
+                        text="Button"
+                        type="primary"
+                        shape="rectangle"
+                        backgroundColors={['#FF5722', '#FFAB91']}
+                        height={64}
+                        style={{flex:1}}
+                        textStyle={{fontFamily:"iransans",fontSize:16}}
+                        states={{
+                            upload: {
+                              text: 'ورود',
+                              backgroundColors: ['#FF5722', '#FF7043'],
+                              onPress: () => {
+                                self.setState({ buttonState: 'uploading' });
+                              },
+                            },
+                            uploading: {
+                              text: 'در حال ورود',
+
+
+                              backgroundColors: ['#ff4949', '#fe6060'],
+                              spinner: true,
+                              onPress: () => {
+                                self.setState({ buttonState: 'upload' });
+                              },
+                            },
+                          }}
+                    >
+                    </ButtonComponent >
                 </View>
-            </KeyboardAwareScrollView>
+
+
+            </LinearGradient>
+
+
         );
     }
 }
@@ -142,14 +233,17 @@ var styles = StyleSheet.create({
         justifyContent: 'space-around',
         paddingHorizontal: 15,
         paddingVertical: 10,
-        flex: 1
+        flex: 1,
+        flexDirection: "column",
+
     },
     container: {
         justifyContent: 'center',
-        marginTop: 50,
-        padding: 20,
+        padding: 64,
         backgroundColor: '#ffffff',
         flex: 1,
+
+
     },
     title: {
         fontSize: 30,

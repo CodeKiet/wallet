@@ -20,7 +20,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/EvilIcons';
 const myIcon = (<Icon name="rocket" size={30} color="#900"/>)
-
+import Collapsible from 'react-native-collapsible';
 var styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -90,7 +90,7 @@ class BuyScreen extends React.Component {
             // Note: By default the icon is only shown on iOS. Search the showIcon option below.
             icon: ({tintColor}) => (
                 <Icon name="cart"
-                      size={32}/>
+                      size={24}/>
             ),
         },
     }
@@ -154,8 +154,8 @@ class SellScreen extends React.Component {
             label: 'فروش',
             // Note: By default the icon is only shown on iOS. Search the showIcon option below.
             icon: ({tintColor}) => (
-               <Icon name="camera"
-                            size={32} />
+                <Icon name="camera"
+                      size={24}/>
             ),
         },
     }
@@ -235,7 +235,7 @@ class SendScreen extends React.Component {
             // Note: By default the icon is only shown on iOS. Search the showIcon option below.
             icon: ({tintColor}) => (
                 <Icon name="envelope"
-                      size={32} />
+                      size={24}/>
             ),
         },
     }
@@ -320,14 +320,51 @@ const MainScreenNavigator = TabNavigator({
         showIcon: true,
         style: {backgroundColor: "white"},
         labelStyle: {color: "#333"},
-        iconStyle: {width:32, height:32},
-        showLabel:true,
-
+        iconStyle: {padding: 10},
 
     }
 });
 
+import Accordion from 'react-native-collapsible/Accordion';
 
+const SECTIONS = [
+    {
+        title: 'نرخ کارمزد؟',
+        content: 'کلیه خدمات رایگان است',
+    },
+    {
+        title: 'سقف میزان تراکنش چقدر است؟',
+        content: '۵۰ میلیون تومان',
+    }
+];
+
+class AccordionView extends Component {
+    _renderHeader(section) {
+        return (
+            <View style={{backgroundColor:"#EEEEEE"}}>
+                <Text style={{fontFamily:"iransans",fontSize:20}}>{section.title}</Text>
+            </View>
+        );
+    }
+
+    _renderContent(section) {
+        return (
+            <View >
+                <Text style={{fontFamily:"iransans",fontSize:16}}>{section.content}</Text>
+            </View>
+        );
+    }
+
+    render() {
+        return (
+            <Accordion
+                sections={SECTIONS}
+                renderHeader={this._renderHeader}
+                renderContent={this._renderContent}
+            />
+        );
+    }
+}
 class Transfer extends React.Component {
     static renderNavigationBar(props) {
         return <LinearGradient
@@ -344,10 +381,10 @@ class Transfer extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 }}>
-            <View style={{flex:1,flexDirection:"row",justifyContent:"flex-end"}}>
-                <Text style={{width:50, height:50, paddingTop:6}}>
+            <View>
+                <Text>
                     <Icon name="navicon"
-                          size={48}/>
+                          size={24}/>
                 </Text>
             </View>
         </LinearGradient>
@@ -415,137 +452,8 @@ class Transfer extends React.Component {
 
     render() {
 
-        return <MainScreenNavigator/>;
 
-        var {username} =  this.props.auth;
-
-        var page;
-        switch (this.state.page) {
-            case "send":
-                page = <View name="send">
-                    <Text style={styles.welcome}>
-                        انتقال وجه به آشنایان
-                    </Text>
-
-
-                    <Form
-                        ref="form1"
-                        type={this.Transaction}
-                        options={ this.options}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                    />
-                    <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
-                                        underlayColor='#99d9f4'>
-                        <Text style={styles.buttonText}>انتقال</Text>
-                    </TouchableHighlight>
-
-                </View>;
-                break;
-
-            case "put":
-                page = <View name="put">
-                    <Form
-                        ref="form2"
-                        type={this.ChargeForm}
-                        options={ this.options}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                    />
-                    <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
-                                        underlayColor='#99d9f4'>
-                        <Text style={styles.buttonText}>افزایش اعتبار</Text>
-                    </TouchableHighlight>
-
-                </View>;
-                break;
-            case "buy":
-                page =
-                    <View name="buy">
-                        <Form
-                            ref="form3"
-                            type={this.ChargeForm}
-                            options={ this.options}
-                            value={this.state.value}
-                            onChange={this.onChange.bind(this)}
-                        />
-                        <QRCode
-                            value={`tester:${this.state.value.amount}`}
-                            size={200}
-                            bgColor='#ff6f00'
-                            fgColor='white'/>
-                    </View>;
-                break;
-            case "sell":
-                page = <View name="sell">
-                    <Form
-                        ref="form4"
-                        type={this.ChargeForm}
-                        options={ this.options}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                    />
-                    <View style={{width:200,height:200}}>
-                        <Camera
-                            ref={(cam) => {
-                            this.camera = cam;
-                          }}
-                            style={styles.preview}
-                            aspect={Camera.constants.Aspect.fill}
-                            onBarCodeRead={this.barcodeRead.bind(this)}
-                        >
-                        </Camera>
-                    </View>
-
-
-                </View>;
-                break;
-            case "withdraw":
-                page = <View name="withdraw">
-                    <Text>{username}</Text>
-                    <Form
-                        ref="form5"
-                        type={this.ChargeForm}
-                        options={ this.options}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                    />
-                    <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
-                                        underlayColor='#99d9f4'>
-                        <Text style={styles.buttonText}>انتقال به حساب</Text>
-                    </TouchableHighlight>
-
-                </View>;
-                break;
-            default:
-                page = <View style={styles.container}>
-                    <Text>Launch page</Text>
-                </View>;
-                break;
-        }
-
-        return (
-            <View style={styles.container}>
-                <Tabs selected={this.state.page} style={{backgroundColor:'white',zIndex:-10}}
-                      selectedStyle={{color:'#ff6f00'}} onSelect={el=>this.setState({page:el.props.name})}>
-                    <Text name="send" style={{flex:1}}
-                          selectedIconStyle={{borderTopWidth:2,borderTopColor:'#ff6f00'}}><Icon name="envelope"
-                                                                                                size={32}/>
-                        انتقال</Text>
-                    <Text name="withdraw" selectedIconStyle={{borderTopWidth:2,borderTopColor:'#ff6f00'}}><Icon
-                        name="rocket" size={32}/> برداشت</Text>
-                    <Text name="put" selectedIconStyle={{borderTopWidth:2,borderTopColor:'#ff6f00'}}><Icon
-                        name="credit-card" size={32}/> واریز </Text>
-                    <Text name="buy" selectedIconStyle={{borderTopWidth:2,borderTopColor:'#ff6f00'}}><Icon name="cart"
-                                                                                                           size={32}/>
-                        پرداخت</Text>
-                    <Text name="sell" selectedIconStyle={{borderTopWidth:2,borderTopColor:'#ff6f00'}}><Icon
-                        name="camera" size={32}/> دریافت</Text>
-
-                </Tabs>
-                {page}
-            </View>
-        );
+        return <AccordionView style={{paddingTop:100}}/>
     }
 }
 
