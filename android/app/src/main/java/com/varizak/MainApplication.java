@@ -3,7 +3,7 @@ package com.varizak;
 import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
-
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.ReactApplication;
@@ -80,7 +80,8 @@ public class MainApplication extends Application implements ReactApplication {
                     new RNSpinkitPackage(),
                     new RNSendIntentPackage(),
                     new ReactNativeI18n(),
-                    new RNFSPackage()
+                    new RNFSPackage(),
+                    new ReactNativeContacts()
             );
         }
     };

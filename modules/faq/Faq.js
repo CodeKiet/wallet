@@ -19,7 +19,7 @@ import QRCode from 'react-native-qrcode';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/EvilIcons';
-const myIcon = (<Icon name="rocket" size={30} color="#900"/>)
+//const myIcon = (<Icon name="rocket" size={30} color="#900"/>)
 import Collapsible from 'react-native-collapsible';
 var styles = StyleSheet.create({
     container: {

@@ -8,10 +8,11 @@ import React, {Component} from 'react';
 import Drawer from 'react-native-drawer';
 import Button from 'react-native-button';
 import Login from "./modules/auth/Login.js";
+import Contacts from "./modules/contacts/Contact.js";
 //import Notification from 'react-native-system-notification';
 import thunk from 'redux-thunk';
 import {Scene, Router, TabBar, Modal, Schema, Actions, Reducer, ActionConst} from 'react-native-router-flux'
-
+import Commons from "./modules/commons"
 import routes from './modules/routeReducer.js';
 
 import {createStore, combineReducers} from 'redux';
@@ -99,193 +100,194 @@ const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
 const persistConfig = {whitelist: "test"};
 const RouterWithRedux = connect()(Router);
+const drawerStyles = {
+    drawer: {shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
+    main: {paddingLeft: 3},
+}
+
+@connect(
+    (state) => ({
+        auth: state.auth,
+        drawer: state.drawer
+    }),
+    (dispatch) => ({
+        dispatch: dispatch,
+    })
+)
+class Main extends Component {
+
+    constructor(props) {
+        super(props);
+        this.strings = new LocalizedStrings({
+            en: {
+                video: "Video",
+                timeline: "Timeline",
+                boiledEgg: "Boiled egg",
+                softBoiledEgg: "Soft-boiled egg",
+                choice: "How to choose the egg"
+            },
+            fa: {
+                video: "ویدیو",
+                timeline: "تایم لاین",
+                boiledEgg: "Uovo sodo",
+                softBoiledEgg: "Uovo alla coque",
+                choice: "Come scegliere l'uovo"
+            }
+        });
+    }
+
+    goToHome = () => {
+        Actions.home();
+        this._drawer.close();
+//            Notification.create({subject: 'Hey', message: 'Yo! Hello world.', smallIcon: 'ic_stat_rasanak_trans',color:"#CC02FF",category:"event"});
+        // Listen to notification-clicking events
+        /*Notification.addListener('press', function (e) {
+         console.log(e);
+         });*/
+
+    };
+
+    goToTutor = () => {
+        Actions.tutor();
+        this._drawer.close();
+//            Notification.create({subject: 'Hey', message: 'Yo! Hello world.', smallIcon: 'ic_stat_rasanak_trans',color:"#CC02FF",category:"event"});
+        // Listen to notification-clicking events
+        /*Notification.addListener('press', function (e) {
+         console.log(e);
+         });*/
+
+    };
+
+    goToFaq = () => {
+        Actions.faq();
+        this._drawer.close();
+
+
+    };
+
+
+    goToVideo = ()=> {
+        Actions.video();
+        this._drawer.close();
+        // Listen to notification-clicking events
+
+    };
+
+    goToRegister = ()=> {
+        // Listen to notification-clicking events
+        Actions.register();
+        this._drawer.close();
+    };
+
+    goToLogin = ()=> {
+        Actions.login();
+        this._drawer.close();
+        // Listen to notification-clicking events
+
+    };
+
+    goToSettings = ()=> {
+        Actions.settings();
+        this._drawer.close();
+        // Listen to notification-clicking events
+
+    };
+
+    goToTransfer = ()=> {
+        Actions.transfer();
+        this._drawer.close();
+        // Listen to notification-clicking events
+
+    };
+
+    goToTimeLine = () => {
+        Actions.timeline();
+        this._drawer.close();
+
+    };
+
+    closeControlPanel = () => {
+        this._drawer.close()
+    };
+
+    openControlPanel = () => {
+        this._drawer.open()
+    };
+
+
+    render() {
+
+        this.strings.setLanguage('fa');
+        var navigationView = (
+            <View style={{flex: 1, backgroundColor: '#333'}}>
+                <View style={{flex: 1, paddingTop:200}}>
+
+
+                    <MenuItemWithIcon icon="user-plus" title="ورود/ثبت نام" onPress={this.goToLogin}/>
+                    <MenuItemWithIcon icon="cloud-download" title="تنظیمات" onPress={this.goToSettings}/>
+                    <MenuItemWithIcon icon="cloud-download" title="معرفی" onPress={this.goToTutor}/>
+                    <MenuItemWithIcon icon="cloud-download" title="سوالات متداول" onPress={this.goToFaq}/>
+                    <MenuItemWithIcon icon="sign-out" title="خروج" onPress={this.goToLogin}/>
+
+                </View>
+            </View>);
+
+        var toggle = Commons.BuildNamedAction("DRAWER_RECORD", "open");
+        return (
+
+            <Drawer
+                open={this.props.drawer? this.props.drawer.open: false}
+                type="displace"
+                side="right"
+                content={navigationView}
+                openDrawerOffset={100}
+                captureGestures ={false}
+                tapToClose={true}
+                tweenHandler={Drawer.tweenPresets.parallax}
+                styles={drawerStyles}
+                onClose={()=>this.props.dispatch(toggle(false))}
+                ref={(c) => this._drawer = c}>
+
+                <View
+                    style={{flex:1,position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}>
+                    <RouterWithRedux sceneStyle={{backgroundColor:'#F7F7F7'}}>
+                        <Scene key="root" unmountScenes>
+                            <Scene key="login" hideNavBar component={Login} title="ورود/ثبت نام" duration={0}/>
+                            <Scene key="transfer" component={Transfer} initial={true} title="واریزک"
+                                   duration={0}/>
+                            <Scene key="settings" component={Settings} title="تنظیمات" duration={0}/>
+                            <Scene key="register" component={Register} title="ثبت نام" duration={0}/>
+                            <Scene key="tutor" hideNavBar component={Slides} duration={0}/>
+                            <Scene key="faq" component={Faq} duration={0}/>
+                            <Scene key="contacts" component={Contacts} duration={0}/>
+                        </Scene>
+                    </RouterWithRedux>
+
+
+                </View>
+            </Drawer>
+
+
+        );
+    }
+
+}
+
 
 getStoredState(persistConfig, (err, restoredState) => {
     const store = createStoreWithMiddleware(combineReducers({routes, ...reducers}), restoredState);
     const persistor = createPersistor(store, persistConfig);
-
     class Varizak extends Component {
-        componentDidMount() {
-            SplashScreen.hide();
-        }
-
-        constructor(props) {
-            super(props);
-            this.strings = new LocalizedStrings({
-                en: {
-                    video: "Video",
-                    timeline: "Timeline",
-                    boiledEgg: "Boiled egg",
-                    softBoiledEgg: "Soft-boiled egg",
-                    choice: "How to choose the egg"
-                },
-                fa: {
-                    video: "ویدیو",
-                    timeline: "تایم لاین",
-                    boiledEgg: "Uovo sodo",
-                    softBoiledEgg: "Uovo alla coque",
-                    choice: "Come scegliere l'uovo"
-                }
-            });
-        }
-
-        goToHome = () => {
-            Actions.home();
-            this._drawer.closeDrawer();
-//            Notification.create({subject: 'Hey', message: 'Yo! Hello world.', smallIcon: 'ic_stat_rasanak_trans',color:"#CC02FF",category:"event"});
-            // Listen to notification-clicking events
-            /*Notification.addListener('press', function (e) {
-             console.log(e);
-             });*/
-
-        };
-
-        goToTutor = () => {
-            Actions.tutor();
-            this._drawer.closeDrawer();
-//            Notification.create({subject: 'Hey', message: 'Yo! Hello world.', smallIcon: 'ic_stat_rasanak_trans',color:"#CC02FF",category:"event"});
-            // Listen to notification-clicking events
-            /*Notification.addListener('press', function (e) {
-             console.log(e);
-             });*/
-
-        };
-
-        goToFaq = () => {
-            Actions.faq();
-            this._drawer.closeDrawer();
-
-
-
-        };
-
-
-
-        goToVideo = ()=> {
-            Actions.video();
-            this._drawer.closeDrawer();
-            // Listen to notification-clicking events
-
-        };
-
-        goToRegister = ()=> {
-            // Listen to notification-clicking events
-            Actions.register();
-            this._drawer.closeDrawer();
-        };
-
-        goToLogin = ()=> {
-            Actions.login();
-            this._drawer.closeDrawer();
-            // Listen to notification-clicking events
-
-        };
-
-        goToSettings = ()=> {
-            Actions.settings();
-            this._drawer.closeDrawer();
-            // Listen to notification-clicking events
-
-        };
-
-        goToTransfer = ()=> {
-            Actions.transfer();
-            this._drawer.closeDrawer();
-            // Listen to notification-clicking events
-
-        };
-
-        goToTimeLine = () => {
-            Actions.timeline();
-            this._drawer.closeDrawer();
-
-        };
-
-        closeControlPanel = () => {
-            this._drawer.close()
-        };
-
-        openControlPanel = () => {
-            this._drawer.open()
-        };
-
-
         render() {
-            console.log("hamed");
-            this.strings.setLanguage('fa');
-            var navigationView = (
-                <View style={{flex: 1, backgroundColor: '#333'}}>
-                    <View style={{flex: 1, paddingTop:200}}>
-
-
-                        <MenuItemWithIcon icon="user-plus" title="ورود/ثبت نام" onPress={this.goToLogin}/>
-                        <MenuItemWithIcon icon="cloud-download" title="تنظیمات" onPress={this.goToSettings}/>
-                        <MenuItemWithIcon icon="cloud-download" title="معرفی" onPress={this.goToTutor}/>
-                        <MenuItemWithIcon icon="cloud-download" title="سوالات متداول" onPress={this.goToFaq}/>
-                        <MenuItemWithIcon icon="sign-out" title="خروج" onPress={this.goToLogin}/>
-
-                    </View>
-                </View>);
-
             return (
                 <Provider store={store}>
-                    <DrawerLayoutAndroid
-                        drawerWidth={250}
-                        drawerPosition={DrawerLayoutAndroid.positions.Right}
-                        renderNavigationView={() => navigationView}
-                        ref={(c) => this._drawer = c}>
-
-                        <View
-                            style={{flex:1,position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}>
-                            <RouterWithRedux sceneStyle={{backgroundColor:'#F7F7F7'}}>
-                                <Scene key="root" unmountScenes>
-                                    <Scene key="login" hideNavBar component={Login} title="ورود/ثبت نام" duration={0}/>
-                                    <Scene key="transfer" component={Transfer} initial={true} title="واریزک"
-                                           duration={0}/>
-                                    <Scene key="settings" component={Settings} title="تنظیمات" duration={0}/>
-                                    <Scene key="register" component={Register} title="ثبت نام" duration={0}/>
-                                    <Scene key="tutor" hideNavBar component={Slides} duration={0}/>
-                                    <Scene key="faq" component={Faq} duration={0}/>
-                                </Scene>
-                            </RouterWithRedux>
-
-
-                        </View>
-                    </DrawerLayoutAndroid>
+                    <Main></Main>
                 </Provider>
-
             );
         }
-
     }
-
-    /*<View
-     style={{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'#F5FCFF'}}/>*/
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#F5FCFF'
-        },
-        welcome: {
-            fontSize: 20,
-            textAlign: 'center',
-            margin: 10
-        },
-        instructions: {
-            textAlign: 'center',
-            color: '#333333',
-            marginBottom: 5
-        }
-    });
-
     AppRegistry.registerComponent('Varizak', () => Varizak);
 });
-
-/*<Scene key="launch" component={Launch}  title="Launch" duration={0}/>
-
- <Scene key="home" component={Home} title="Home" duration={0}/>*/
 
 
 

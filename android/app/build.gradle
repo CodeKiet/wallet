@@ -143,6 +143,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-contacts')
 
     compile project(':react-native-camera')
     compile  'com.google.firebase:firebase-core:9.4.0'

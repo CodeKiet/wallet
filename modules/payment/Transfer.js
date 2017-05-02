@@ -4,6 +4,7 @@ import {
 } from  'react-native';
 import React, {Component} from 'react';
 import Tabs from 'react-native-tabs';
+import Commons from '../commons/index.js';
 import Resource from "../resource/Resource.js"
 import Auth from "../auth/Auth.js"
 var SendIntentAndroid = require('react-native-send-intent');
@@ -11,7 +12,7 @@ import {connect} from 'react-redux'
 
 import Button from 'react-native-button';
 import Communications from 'react-native-communications';
-import {Actions, Router} from 'react-native-redux-router';
+import {Actions, Router} from 'react-native-router-flux';
 var tcomb = require('tcomb-form-native');
 var Form = tcomb.form.Form;
 import Camera from 'react-native-camera';
@@ -19,7 +20,7 @@ import QRCode from 'react-native-qrcode';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/EvilIcons';
-const myIcon = (<Icon name="rocket" size={30} color="#900"/>)
+//const myIcon = (<Icon name="rocket" size={30} color="#900"/>)
 
 var styles = StyleSheet.create({
     container: {
@@ -51,6 +52,7 @@ var styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         marginBottom: 10,
+        width: 200,
         alignSelf: 'stretch',
         justifyContent: 'center'
     }, preview: {
@@ -154,8 +156,8 @@ class SellScreen extends React.Component {
             label: 'فروش',
             // Note: By default the icon is only shown on iOS. Search the showIcon option below.
             icon: ({tintColor}) => (
-               <Icon name="camera"
-                            size={32} />
+                <Icon name="camera"
+                      size={32}/>
             ),
         },
     }
@@ -235,9 +237,15 @@ class SendScreen extends React.Component {
             // Note: By default the icon is only shown on iOS. Search the showIcon option below.
             icon: ({tintColor}) => (
                 <Icon name="envelope"
-                      size={32} />
+                      size={32}/>
             ),
         },
+    }
+
+    onPress() {
+        //SendIntentAndroid.sendPhoneCall(`*788*97*8600*${this.state.value.amount}%23`);
+
+        Actions.contacts();
     }
 
     constructor(props) {
@@ -282,7 +290,7 @@ class SendScreen extends React.Component {
     }
 
     render() {
-        return <View name="send">
+        return <View name="send" style={styles.container}>
             <Text style={styles.welcome}>
                 انتقال وجه به آشنایان
             </Text>
@@ -295,10 +303,12 @@ class SendScreen extends React.Component {
                 value={this.state.value}
                 onChange={this.onChange.bind(this)}
             />
-            <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
-                                underlayColor='#99d9f4'>
-                <Text style={styles.buttonText}>انتقال</Text>
-            </TouchableHighlight>
+            <View style={{flexDirection:"row",justifyContent:"center"}}>
+                <TouchableHighlight style={styles.button} onPress={this.onPress.bind(this)}
+                                    underlayColor='#99d9f4'>
+                    <Text style={styles.buttonText}>انتقال</Text>
+                </TouchableHighlight>
+            </View>
 
         </View>;
         ;
@@ -312,6 +322,7 @@ class AllContactsScreen extends React.Component {
 }
 
 const MainScreenNavigator = TabNavigator({
+    Send: {screen: SendScreen},
     Buy: {screen: BuyScreen},
     Sell: {screen: SellScreen},
 }, {
@@ -320,16 +331,28 @@ const MainScreenNavigator = TabNavigator({
         showIcon: true,
         style: {backgroundColor: "white"},
         labelStyle: {color: "#333"},
-        iconStyle: {width:32, height:32},
-        showLabel:true,
+        iconStyle: {width: 32, height: 32},
+        showLabel: true,
 
 
     }
 });
 
+@connect(
+    (state) => ({
+        auth: state.auth,
+        captcha: state.captcha,
+        drawer: state.drawer
+    }),
+    (dispatch) => ({
+        dispatch: dispatch,
+    })
+)
+class NavBar extends React.Component {
 
-class Transfer extends React.Component {
-    static renderNavigationBar(props) {
+    render() {
+        self = this;
+        var toggle = Commons.BuildNamedAction("DRAWER_RECORD", "open");
         return <LinearGradient
             start={{x: 0.25, y: 0.5}} end={{x: 0.75, y: 0.5}}
             locations={[0,0.23,1]}
@@ -345,12 +368,25 @@ class Transfer extends React.Component {
                 alignItems: 'center',
                 }}>
             <View style={{flex:1,flexDirection:"row",justifyContent:"flex-end"}}>
-                <Text style={{width:50, height:50, paddingTop:6}}>
-                    <Icon name="navicon"
-                          size={48}/>
-                </Text>
+                <TouchableHighlight
+                    onPress={()=>{self.props.dispatch(toggle(self.props.drawer?!self.props.drawer.open: true))}}
+                    underlayColor='#9E9E9E'>
+                    <Text style={{width:50, height:50, paddingTop:6}}>
+                        <Icon name="navicon"
+                              size={48}/>
+                    </Text>
+                </TouchableHighlight>
+
             </View>
         </LinearGradient>
+    }
+}
+
+
+class Transfer extends React.Component {
+    static renderNavigationBar(props) {
+        return <NavBar {...props}/>;
+
     }
 
     constructor(props) {
@@ -363,7 +399,7 @@ class Transfer extends React.Component {
         this.options = {
             fields: {
                 dst: {
-                    placeholder: 'شماره مقصد',
+                    placeholder: 'شماره گیرنده وجه',
                     label: ' ',
                     error: 'شماره را دوباره چک کنید!',
                     help: '09124002000 یا 989124002000',
@@ -392,7 +428,10 @@ class Transfer extends React.Component {
     }
 
     onPress() {
-        SendIntentAndroid.sendPhoneCall(`*788*97*8600*${this.state.value.amount}%23`);
+        //SendIntentAndroid.sendPhoneCall(`*788*97*8600*${this.state.value.amount}%23`);
+
+
+
     }
 
     takePicture() {
